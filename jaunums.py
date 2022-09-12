@@ -1,0 +1,1 @@
+kkas te ir jauns
