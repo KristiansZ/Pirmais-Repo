@@ -4,6 +4,9 @@ import json
 import datetime
 import time
 import yaml
+import logging
+import logging.config
+import yaml
 
 #Prints a text that signifies that this file was executed 
 from configparser import ConfigParser
@@ -12,6 +15,15 @@ print('Asteroid processing service')
 
 # Initiating and reading config values
 print('Loading configuration from file')
+
+# Loading logging configuration
+with open('./log_worker.yaml', 'r') as stream:
+    log_config = yaml.safe_load(stream)
+
+logging.config.dictConfig(log_config)
+
+# Creating logger
+logger = logging.getLogger('root')
 
 #Gets the api key and url
 try:
@@ -23,7 +35,7 @@ try:
 
 except:
 	logger.exception('')
-print('DONE')
+logger.info('DONE')
 
 # Getting todays date
 dt = datetime.now()
