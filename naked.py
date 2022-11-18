@@ -92,6 +92,16 @@ def push_asteroids_arrays_to_db(request_day, ast_array, hazardous):
 			mysql_insert_ast_into_db(request_day, hazardous, asteroid[0], asteroid[1], asteroid[2], asteroid[3], asteroid[4], asteroid[5], asteroid[6], asteroid[7], asteroid[8], asteroid[9])
 		else:
 			logger.debug("Asteroid already IN DB")
+
+def getting_ast_count():
+	dt = datetime.now()
+	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
+	a = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
+	if a.status_code == 200:
+		json_dataa = json.loads(a.text)
+		return int(json_dataa['element_count'])
+count_total = getting_ast_count()
+
 if __name__ == "__main__":
 
 	connection = None
