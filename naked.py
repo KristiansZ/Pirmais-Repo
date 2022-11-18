@@ -96,11 +96,30 @@ def push_asteroids_arrays_to_db(request_day, ast_array, hazardous):
 def getting_ast_count():
 	dt = datetime.now()
 	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
-	a = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
-	if a.status_code == 200:
-		json_dataa = json.loads(a.text)
-		return int(json_dataa['element_count'])
+	r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
+	if r.status_code == 200:
+		json_data = json.loads(r.text)
+		return int(json_data['element_count'])
 count_total = getting_ast_count()
+
+def pos_ast_pass_dist():
+	dist_list = []
+	dt = datetime.now()
+	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
+	r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
+	if r.status_code == 200:
+		json_data = json.loads(r.text)
+		for val in json_data['near_earth_objects'][request_date]:
+			if 'close_approach_data' in val:
+				if len(val['close_approach_data']) > 0:
+					if 'miss_distance' in val['close_approach_data'][0]:
+						if 'kilometers' in val['close_approach_data'][0]['miss_distance']:
+							tmp_ast_miss_dist = round(float(val['close_approach_data'][0]['miss_distance']['kilometers']), 3)
+							dist_list.append(tmp_ast_miss_dist)
+	#dist_list.append(0)
+	return dist_list
+	
+dist_list = pos_ast_pass_dist()
 
 if __name__ == "__main__":
 
