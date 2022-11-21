@@ -20,6 +20,7 @@ else:
 print("------------------------")
 print ("Testing to see if there are any false passing distances (dist less than given)")
 distance = 5000
-assert pos_low_pass_dist(distance) != distance
+assert pos_low_pass_dist(distance) >= distance
+print("No false distances detected")
 print("------------------------")
 print("Everything is OK")
