@@ -93,33 +93,32 @@ def push_asteroids_arrays_to_db(request_day, ast_array, hazardous):
 		else:
 			logger.debug("Asteroid already IN DB")
 
-def getting_ast_count():
+def getting_data():
 	dt = datetime.now()
 	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
 	r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
 	if r.status_code == 200:
 		json_data = json.loads(r.text)
-		return int(json_data['element_count'])
+	return json_data
+
+def getting_ast_count():
+	json_data = getting_data()
+	return int(json_data['element_count'])
 count_total = getting_ast_count()
 
-def pos_ast_pass_dist():
-	dist_list = []
+def pos_low_pass_dist(distance):
+	closest_miss = distance
 	dt = datetime.now()
-	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
-	r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
-	if r.status_code == 200:
-		json_data = json.loads(r.text)
-		for val in json_data['near_earth_objects'][request_date]:
-			if 'close_approach_data' in val:
-				if len(val['close_approach_data']) > 0:
-					if 'miss_distance' in val['close_approach_data'][0]:
-						if 'kilometers' in val['close_approach_data'][0]['miss_distance']:
-							tmp_ast_miss_dist = round(float(val['close_approach_data'][0]['miss_distance']['kilometers']), 3)
-							dist_list.append(tmp_ast_miss_dist)
-	#dist_list.append(0)
-	return dist_list
-	
-dist_list = pos_ast_pass_dist()
+	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2) 
+	json_data = getting_data()
+	for val in json_data['near_earth_objects'][request_date]:
+		if 'close_approach_data' in val:
+			if len(val['close_approach_data']) > 0:
+				if 'miss_distance' in val['close_approach_data'][0]:
+					if 'kilometers' in val['close_approach_data'][0]['miss_distance']:
+						tmp_ast_miss_dist = round(float(val['close_approach_data'][0]['miss_distance']['kilometers']), 3)
+						if (tmp_ast_miss_dist < closest_miss): closest_miss = tmp_ast_miss_dist
+	return closest_miss
 
 if __name__ == "__main__":
 
