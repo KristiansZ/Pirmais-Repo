@@ -1,3 +1,4 @@
+te kkāda probļemka bija huehue
 kkas te ir jauns
 Extra kkas klāt
 Palielam gatavs relīzei
