@@ -1,1 +1,2 @@
+this new feature changes the whole core of the application so it's basically a new release now
 I created a new feature
